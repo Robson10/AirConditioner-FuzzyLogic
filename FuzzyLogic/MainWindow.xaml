@@ -1,0 +1,606 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sparrow="http://sparrowtoolkit.codeplex.com/wpf"
+        xmlns:local="clr-namespace:FuzzyLogic"
+        
+    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity" 
+    xmlns:ig="http://schemas.infragistics.com/xaml" x:Class="FuzzyLogic.MainWindow"
+    
+        Title="MainWindow" Width="1000" Height="500" 
+        >
+    <Window.Resources>
+        <ResourceDictionary>
+
+            <!--Chart-->
+            <Style x:Key="TooltipLayerStyle" TargetType="ig:ItemToolTipLayer">
+                <Setter Property="FontWeight" Value="Heavy"></Setter>
+                <Setter Property="FontStyle" Value="Italic"></Setter>
+                <Setter Property="UseInterpolation" Value="True"/>
+                <Setter Property="TransitionDuration" Value="0:00:00.05"/>
+            </Style>
+            <Style x:Key="TooltipStyle" TargetType="ContentControl">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ContentControl">
+                            <StackPanel Orientation="Horizontal" Margin="1">
+                                <Border Background="White" BorderBrush="Black" BorderThickness="1">
+                                    <ContentPresenter Margin="5,5,5,5" Content="{TemplateBinding Content}"/>
+                                </Border>
+                            </StackPanel>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <!--Button-->
+            <LinearGradientBrush x:Key="ButtonBackground" StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="Gray" Offset="0"/>
+                <GradientStop Color="#FF333333" Offset="1"/>
+            </LinearGradientBrush>
+            <Style x:Key="SimpleButtonStyle" TargetType="{x:Type Button}">
+                <Setter Property="Foreground" Value="GreenYellow" />
+                <Setter Property="FontWeight" Value="Bold"/>
+
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid>
+                                <Border Background="{StaticResource ButtonBackground}" VerticalAlignment="Stretch" CornerRadius="2" HorizontalAlignment="Stretch"/>
+                                <Border x:Name="BorderPressed"  Opacity="0" Background="Blue" VerticalAlignment="Stretch" CornerRadius="0" HorizontalAlignment="Stretch"/>
+                                <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="MainContent" />
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Trigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetName="BorderPressed" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.EnterActions>
+                                    <Trigger.ExitActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetName="BorderPressed" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.2"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.ExitActions>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid Background="#FF252525">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10*"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="10*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5*" />
+            <RowDefinition Height="100*"/>
+        </Grid.RowDefinitions>
+        <Button x:Name="Pause"
+						Grid.Column="1" Grid.Row="0" Content="||" Style="{StaticResource SimpleButtonStyle}"
+						Command="{Binding ClockSpeedCommand, UpdateSourceTrigger=PropertyChanged}"
+						CommandParameter="0"/>
+        <Button x:Name="Play" 
+						Grid.Column="2" Grid.Row="0" Content="&gt;" Style="{StaticResource SimpleButtonStyle}"
+						Command="{Binding ClockSpeedCommand, UpdateSourceTrigger=PropertyChanged}"
+						CommandParameter="1"/>
+        <Button x:Name="Fast1" 
+						Grid.Column="3" Grid.Row="0" Content="&gt;&gt;" Style="{StaticResource SimpleButtonStyle}"
+						Command="{Binding ClockSpeedCommand, UpdateSourceTrigger=PropertyChanged}"
+						CommandParameter="2"/>
+        <Button x:Name="Fast2" 
+						Grid.Column="4" Grid.Row="0" Content="&gt;&gt;&gt;" Style="{StaticResource SimpleButtonStyle}"
+						Command="{Binding ClockSpeedCommand, UpdateSourceTrigger=PropertyChanged}"
+						CommandParameter="3"/>
+
+        <TabControl x:Name="tabControl" Grid.Row="1" Grid.ColumnSpan="6">
+
+            <TabItem Header="Conditions and Charts" Background="#FF909090">
+                <Grid Background="#FF252525">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="100*"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="100*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="3*" />
+                        <RowDefinition Height="100*"/>
+                        <RowDefinition Height="3*" />
+                    </Grid.RowDefinitions>
+
+                    <GroupBox x:Name="Settings" 
+						Grid.Column="1" Grid.Row="1" Background="Aqua">
+                        <Grid >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="115*"/>
+                                <ColumnDefinition Width="58*"/>
+                                <ColumnDefinition Width="40*"/>
+                                <ColumnDefinition Width="17*"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="115*"/>
+                                <ColumnDefinition Width="115*"/>
+                                <ColumnDefinition Width="3*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="1*" />
+                                <RowDefinition Height="100*"/>
+                                <RowDefinition Height="100*"/>
+                                <RowDefinition Height="100*"/>
+                                <RowDefinition Height="100*"/>
+                                <RowDefinition Height="100*"/>
+                                <RowDefinition Height="100*"/>
+                                <RowDefinition Height="1000*"/>
+                                <RowDefinition Height="1*" />
+                            </Grid.RowDefinitions>
+                            <Label Content="TempExpected [°C]" 
+                                   Grid.Row="1" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                            <ComboBox Name="TempExpected"  
+                                      Grid.Row="1" Grid.Column="2"
+                                      ItemsSource="{Binding TempList,UpdateSourceTrigger=PropertyChanged}"  
+                                      SelectedItem="{Binding TempExpected}"
+                                      />
+
+                            <Label Content="RoomArea [m²]" 
+                                   Grid.Row="2" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                            <ComboBox Name="RoomArea"
+                                      Grid.Row="2" Grid.Column="2" 
+                                      ItemsSource="{Binding RoomAreaList,UpdateSourceTrigger=PropertyChanged}" 
+                                      SelectedIndex="{Binding SelectedRoomArea}"/>
+
+                            <Label Content="Window Area [m²]" 
+                                   Grid.Row="4" Grid.Column="1"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                            <ComboBox Grid.Row="4" Grid.Column="2" 
+                                      ItemsSource="{Binding WindowAreaList,UpdateSourceTrigger=PropertyChanged}" 
+                                      SelectedIndex="{Binding SelectedWindowArea}"/>
+
+                            <Label Content="WallHeight [cm]" 
+                                   Grid.Row="3" Grid.Column="1"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                            <ComboBox Name="WallHeight"
+                                      Grid.Row="3" Grid.Column="2" 
+                                      ItemsSource="{Binding WallHeightList,UpdateSourceTrigger=PropertyChanged}" 
+                                      SelectedIndex="{Binding SelectedWallHeight}"/>
+
+                            <Label Content="Work Hours" 
+                                   Grid.Row="5" Grid.Column="1"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                            <ComboBox Grid.Row="5" Grid.Column="2" 
+                                      ItemsSource="{Binding WorkHourMinList,UpdateSourceTrigger=PropertyChanged}" 
+                                      SelectedItem="{Binding SelectedWorkHourMin}"/>
+                            <ComboBox Grid.Row="5" Grid.Column="3" 
+                                      ItemsSource="{Binding WorkHourMaxList,UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2" 
+                                      SelectedItem="{Binding SelectedWorkHourMax}"/>
+
+
+                            <Label Content="{Binding SrodekHeat}" Grid.Row="6" Grid.Column="6"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                            <Label Content="{Binding SrodekConditioner}" Grid.Row="6" Grid.Column="7"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                            <Label Content="{Binding TempNow}" Grid.Row="6" Grid.Column="3"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+
+                            <ig:XamDataChart Name="Helper"
+                                             Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="8" HorizontalZoomable="True" VerticalZoomable="True"
+                                             PlotAreaBackground="Wheat" 
+                                             Title="{Binding ChartHelperTittle}"
+                                             TitleHorizontalAlignment="Center">
+                                <ig:XamDataChart.Axes>
+                                    <ig:NumericXAxis x:Name="XAxisHelper"
+                                                     Title="Temperatura"
+                                                     Interval="10"
+                                                     MinimumValue="{Binding HelperMin}"
+                                                     MaximumValue="{Binding HelperMax}"/>
+
+                                    <ig:NumericYAxis x:Name="YAxisHelper" 
+                                                     Title="Y"
+                                                     Interval="0.5"
+                                                     MinimumValue="-0.5"
+                                                     MaximumValue="1.5"/>
+                                </ig:XamDataChart.Axes>
+
+                                <ig:XamDataChart.Series>
+                                    <ig:ScatterLineSeries ItemsSource="{Binding Line_Heat }" 
+                                                          XMemberPath="X"
+                                                          YMemberPath="ZbiorWnioskowania"
+                                                          XAxis="{Binding ElementName=XAxisHelper}"
+                                                          YAxis="{Binding ElementName=YAxisHelper}"
+                                                          Thickness="2"
+                                                          Brush="Red"
+                                                          MarkerType="None"
+                                                        MarkerBrush="Transparent"
+                                                          >
+
+                                        <ig:ScatterLineSeries.ToolTip>
+                                            <TextBlock Text="{Binding Path=Item.Text , Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                        </ig:ScatterLineSeries.ToolTip>
+                                    </ig:ScatterLineSeries>
+                                    
+                                    <ig:ScatterLineSeries ItemsSource="{Binding Line_Conditioner }" 
+                                                          XMemberPath="X"
+                                                          YMemberPath="ZbiorWnioskowania"
+                                                          XAxis="{Binding ElementName=XAxisHelper}"
+                                                          YAxis="{Binding ElementName=YAxisHelper}"
+                                                          Thickness="2"
+                                                          Brush="Blue"
+                                                          MarkerType="None"
+                                                        MarkerBrush="Transparent"
+                                                          >
+
+                                        <ig:ScatterLineSeries.ToolTip>
+                                            <TextBlock Text="{Binding Path=Item.Text , Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                        </ig:ScatterLineSeries.ToolTip>
+                                    </ig:ScatterLineSeries>
+                                </ig:XamDataChart.Series>
+
+                            </ig:XamDataChart>
+                            <Button Grid.Column="6" Command="{Binding HelperCommand}" Content="Button" HorizontalAlignment="Left" Grid.RowSpan="2" VerticalAlignment="Top" Width="75"/>
+
+                        </Grid>
+                    </GroupBox>
+
+                    <GroupBox x:Name="Charts"   Grid.Column="3" Grid.Row="1" Background="#FF252525" >
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100*"/>
+                                <ColumnDefinition Width="100*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="100*" />
+                                <RowDefinition Height="100*"/>
+                                <RowDefinition Height="100*" />
+                            </Grid.RowDefinitions>
+                            <ig:XamDataChart Name="WorkHours"   
+                                             Title="{Binding ChartWorkHoursTittle}" Grid.Row="3" Grid.Column="1" HorizontalZoomable="True" VerticalZoomable="True" PlotAreaBackground="Wheat" TitleHorizontalAlignment="Center" >
+                                <ig:XamDataChart.Axes>
+                                    <ig:NumericXAxis x:Name="XAxis"
+                                                     Title="Hours"
+                                                     Interval="2"
+                                                     MinimumValue="0"
+                                                     MaximumValue="24"/>
+                                    <ig:NumericYAxis x:Name="YAxis" 
+                                                     Title="Y"
+                                                     Interval="0.5"
+                                                     MinimumValue="-0.5"
+                                                     MaximumValue="1.5"/>
+                                </ig:XamDataChart.Axes>
+                                <ig:XamDataChart.Series>
+                                    <ig:ScatterLineSeries Name="BlackLine"
+                                                          ItemsSource="{Binding Line_WorkHours }" 
+                                                          XMemberPath="X"
+                                                          YMemberPath="Y"
+                                                          XAxis="{Binding ElementName=XAxis}"
+                                                          YAxis="{Binding ElementName=YAxis}"
+                                                          Thickness="3"
+                                                          Brush="Red"
+                                                          MarkerType="Circle"
+                                                          MarkerBrush="Red"
+                                                          >
+                                        <ig:ScatterLineSeries.ToolTip>
+                                            <TextBlock Text="{Binding Path=Item.Text , Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                        </ig:ScatterLineSeries.ToolTip>
+                                    </ig:ScatterLineSeries>
+                                </ig:XamDataChart.Series>
+
+                            </ig:XamDataChart>
+                            <ig:XamDataChart Name="Heat"
+                                             Title="{Binding ChartHeatTittle}" Grid.Row="1" Grid.Column="0" HorizontalZoomable="True" VerticalZoomable="True" PlotAreaBackground="Wheat" TitleHorizontalAlignment="Center">
+                                <ig:XamDataChart.Axes>
+                                    <ig:NumericXAxis x:Name="XAxisHeat"
+                                                     Title="Temperatura"
+                                                     Interval="10"
+                                                     MinimumValue="{Binding HeatMin}"
+                                                     MaximumValue="{Binding HeatMax}"
+                                                     />
+                                    <ig:NumericYAxis x:Name="YAxisHeat" 
+                                                     Title="Y"
+                                                     Interval="0.5"
+                                                     MinimumValue="-0.5"
+                                                     MaximumValue="1.5"/>
+                                </ig:XamDataChart.Axes>
+                                <ig:XamDataChart.Series>
+                                    <ig:ScatterLineSeries 
+                                                          ItemsSource="{Binding Line_Heat }" 
+                                                          XMemberPath="X"
+                                                          YMemberPath="Min"
+                                                          XAxis="{Binding ElementName=XAxisHeat}"
+                                                          YAxis="{Binding ElementName=YAxisHeat}"
+                                                          Thickness="2"
+                                                          Brush="Blue"
+                                                          MarkerType="Circle"
+                                                          MarkerBrush="Blue"
+                                                          >
+                                        <ig:ScatterLineSeries.ToolTip>
+                                            <TextBlock Text="{Binding Path=Item.Text , Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                        </ig:ScatterLineSeries.ToolTip>
+                                    </ig:ScatterLineSeries>
+                                    
+                                    <ig:ScatterLineSeries 
+                                                          ItemsSource="{Binding Line_Heat }" 
+                                                          XMemberPath="X"
+                                                          YMemberPath="Mid"
+                                                          XAxis="{Binding ElementName=XAxisHeat}"
+                                                          YAxis="{Binding ElementName=YAxisHeat}"
+                                                          Thickness="2"
+                                                          Brush="Gold"
+                                                          MarkerType="Circle"
+                                                          MarkerBrush="Gold"
+                                                          >
+                                        <ig:ScatterLineSeries.ToolTip>
+                                            <TextBlock Text="{Binding Path=Item.Text , Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                        </ig:ScatterLineSeries.ToolTip>
+                                    </ig:ScatterLineSeries>
+                                    
+                                    <ig:ScatterLineSeries 
+                                                          ItemsSource="{Binding Line_Heat}" 
+                                                          XMemberPath="X"
+                                                          YMemberPath="Max"
+                                                          XAxis="{Binding ElementName=XAxisHeat}"
+                                                          YAxis="{Binding ElementName=YAxisHeat}"
+                                                          Thickness="2"
+                                                          Brush="Red"
+                                                          MarkerType="Circle"
+                                                          MarkerBrush="Red"
+                                                          >
+                                        <ig:ScatterLineSeries.ToolTip>
+                                            <TextBlock Text="{Binding Path=Item.Text , Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                        </ig:ScatterLineSeries.ToolTip>
+                                    </ig:ScatterLineSeries>
+                                </ig:XamDataChart.Series>
+                            </ig:XamDataChart>
+                            <ig:XamDataChart Name="Conditioner"   
+                                             Title="{Binding ChartConditionerTittle}" Grid.Row="1" Grid.Column="1" HorizontalZoomable="True" VerticalZoomable="True" PlotAreaBackground="Wheat" TitleHorizontalAlignment="Center">
+                                <ig:XamDataChart.Axes>
+                                    <ig:NumericXAxis x:Name="XAxisConditioner"
+                                                     Title="Temperatura"
+                                                     Interval="10"
+                                                     MinimumValue="{Binding ConditionerMin}"
+                                                     MaximumValue="{Binding ConditionerMax}"/>
+                                    <ig:NumericYAxis x:Name="YAxisConditioner" 
+                                                     Title="Y"
+                                                     Interval="0.5"
+                                                     MinimumValue="-0.5"
+                                                     MaximumValue="1.5"/>
+                                </ig:XamDataChart.Axes>
+
+                                <ig:XamDataChart.Series>
+                                    <ig:ScatterLineSeries 
+                                                          ItemsSource="{Binding Line_Conditioner }" 
+                                                          XMemberPath="X"
+                                                          YMemberPath="Max"
+                                                          XAxis="{Binding ElementName=XAxisConditioner}"
+                                                          YAxis="{Binding ElementName=YAxisConditioner}"
+                                                          Thickness="2"
+                                                          Brush="Blue"
+                                                          MarkerType="Circle"
+                                                          MarkerBrush="Blue"
+                                                          >
+                                        <ig:ScatterLineSeries.ToolTip>
+                                            <TextBlock Text="{Binding Path=Item.Text , Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                        </ig:ScatterLineSeries.ToolTip>
+                                    </ig:ScatterLineSeries>
+
+                                    <ig:ScatterLineSeries 
+                                                          ItemsSource="{Binding Line_Conditioner }" 
+                                                          XMemberPath="X"
+                                                          YMemberPath="Mid"
+                                                          XAxis="{Binding ElementName=XAxisConditioner}"
+                                                          YAxis="{Binding ElementName=YAxisConditioner}"
+                                                          Thickness="2"
+                                                          Brush="Gold"
+                                                          MarkerType="Circle"
+                                                          MarkerBrush="Gold"
+                                                          >
+                                        <ig:ScatterLineSeries.ToolTip>
+                                            <TextBlock Text="{Binding Path=Item.Text , Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                        </ig:ScatterLineSeries.ToolTip>
+                                    </ig:ScatterLineSeries>
+
+                                    <ig:ScatterLineSeries 
+                                                          ItemsSource="{Binding Line_Conditioner}" 
+                                                          XMemberPath="X"
+                                                          YMemberPath="Min"
+                                                          XAxis="{Binding ElementName=XAxisConditioner}"
+                                                          YAxis="{Binding ElementName=YAxisConditioner}"
+                                                          Thickness="2"
+                                                          Brush="Red"
+                                                          MarkerType="Circle"
+                                                          MarkerBrush="Red"
+                                                          >
+                                        <ig:ScatterLineSeries.ToolTip>
+                                            <TextBlock Text="{Binding Path=Item.Text , Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                        </ig:ScatterLineSeries.ToolTip>
+                                    </ig:ScatterLineSeries>
+                                </ig:XamDataChart.Series>
+                            </ig:XamDataChart>
+                            <ig:XamDataChart Name="Temp"
+                                             Title="{Binding ChartTempTittle}" Grid.Row="2" Grid.Column="0" HorizontalZoomable="True" VerticalZoomable="True" PlotAreaBackground="Wheat" TitleHorizontalAlignment="Center">
+                                <ig:XamDataChart.Axes>
+                                    <ig:NumericXAxis x:Name="XAxisTemp"
+                                                     Title="Temperatura"
+                                                     Interval="10"
+                                                     MinimumValue="{Binding TempMin}"
+                                                     MaximumValue="{Binding TempMax}"/>
+
+                                    <ig:NumericYAxis x:Name="YAxisTemp" 
+                                                     Title="Y"
+                                                     Interval="0.5"
+                                                     MinimumValue="-0.5"
+                                                     MaximumValue="1.5"/>
+                                </ig:XamDataChart.Axes>
+
+                                <ig:XamDataChart.Series>
+                                    <ig:ScatterLineSeries 
+                                                          ItemsSource="{Binding Line_Temp }" 
+                                                          XMemberPath="X"
+                                                          YMemberPath="Min"
+                                                          XAxis="{Binding ElementName=XAxisTemp}"
+                                                          YAxis="{Binding ElementName=YAxisTemp}"
+                                                          Thickness="2"
+                                                          Brush="Purple"
+                                                          MarkerType="Circle"
+                                                        MarkerBrush="Purple"
+                                                          >
+                                        <ig:ScatterLineSeries.ToolTip>
+                                            <TextBlock Text="{Binding Path=Item.Text , Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                        </ig:ScatterLineSeries.ToolTip>
+                                    </ig:ScatterLineSeries>
+                                    
+                                    <ig:ScatterLineSeries 
+                                                          ItemsSource="{Binding Line_Temp }" 
+                                                          XMemberPath="X"
+                                                          YMemberPath="Low"
+                                                          XAxis="{Binding ElementName=XAxisTemp}"
+                                                          YAxis="{Binding ElementName=YAxisTemp}"
+                                                          Thickness="2"
+                                                          Brush="Blue"
+                                                          MarkerType="Circle"
+                                                        MarkerBrush="Blue"
+                                                          >
+                                        <ig:ScatterLineSeries.ToolTip>
+                                            <TextBlock Text="{Binding Path=Item.Text , Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                        </ig:ScatterLineSeries.ToolTip>
+                                    </ig:ScatterLineSeries>
+                                    
+                                    <ig:ScatterLineSeries 
+                                                          ItemsSource="{Binding Line_Temp }" 
+                                                          XMemberPath="X"
+                                                          YMemberPath="Mid"
+                                                          XAxis="{Binding ElementName=XAxisTemp}"
+                                                          YAxis="{Binding ElementName=YAxisTemp}"
+                                                          Thickness="2"
+                                                          Brush="Green"
+                                                          MarkerType="Circle"
+                                                          MarkerBrush="Green"
+                                                          >
+                                        <ig:ScatterLineSeries.ToolTip>
+                                            <TextBlock Text="{Binding Path=Item.Text , Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                        </ig:ScatterLineSeries.ToolTip>
+                                    </ig:ScatterLineSeries>
+                                    <ig:ScatterLineSeries 
+                                                          ItemsSource="{Binding Line_Temp }" 
+                                                          XMemberPath="X"
+                                                          YMemberPath="Mor"
+                                                          XAxis="{Binding ElementName=XAxisTemp}"
+                                                          YAxis="{Binding ElementName=YAxisTemp}"
+                                                          Thickness="2"
+                                                          Brush="Orange"
+                                                          MarkerType="Circle"
+                                                        MarkerBrush="Orange"
+                                                          >
+                                        <ig:ScatterLineSeries.ToolTip>
+                                            <TextBlock Text="{Binding Path=Item.Text , Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                        </ig:ScatterLineSeries.ToolTip>
+                                        
+                                    </ig:ScatterLineSeries>
+                                    <ig:ScatterLineSeries 
+                                                          ItemsSource="{Binding Line_Temp}" 
+                                                          XMemberPath="X"
+                                                          YMemberPath="Max"
+                                                          XAxis="{Binding ElementName=XAxisTemp}"
+                                                          YAxis="{Binding ElementName=YAxisTemp}"
+                                                          Thickness="2"
+                                                          Brush="Red"
+                                                          MarkerType="Circle"
+                                                          MarkerBrush="Red"
+                                                          >
+                                        <ig:ScatterLineSeries.ToolTip>
+                                            <TextBlock Text="{Binding Path=Item.Text , Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                        </ig:ScatterLineSeries.ToolTip>
+                                    </ig:ScatterLineSeries>
+                                </ig:XamDataChart.Series>
+                            </ig:XamDataChart>
+                            <ig:XamDataChart Name="Weather"
+                                             Title="{Binding ChartWeatherTittle}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" HorizontalZoomable="True" VerticalZoomable="True" PlotAreaBackground="Wheat" TitleHorizontalAlignment="Center">
+                                <ig:XamDataChart.Axes>
+                                    <ig:NumericXAxis x:Name="XAxisWeather"
+                                                     Title="Time"
+                                                     Interval="10"
+                                                     MinimumValue="{Binding WeatherXmin}"
+                                                     MaximumValue="{Binding WeatherXmax}"/>
+                                                     
+                                    <ig:NumericYAxis x:Name="YAxisWeather" 
+                                                     Title="Temp"
+                                                     Interval="10"
+                                                     MinimumValue="{Binding TempMin}"
+                                                     MaximumValue="{Binding TempMax}"/>
+                                </ig:XamDataChart.Axes>
+                                <ig:XamDataChart.Series>
+                                    <ig:ScatterLineSeries 
+                                                          ItemsSource="{Binding Line_Weather }" 
+                                                          XMemberPath="X"
+                                                          YMemberPath="Y"
+                                                          XAxis="{Binding ElementName=XAxisWeather}"
+                                                          YAxis="{Binding ElementName=YAxisWeather}"
+                                                          Thickness="2"
+                                                          Brush="Blue"
+                                                          MarkerType="Circle"
+                                                          MarkerBrush="Blue"
+                                                          >
+                                        <ig:ScatterLineSeries.ToolTip>
+                                            <TextBlock Text="{Binding Path=Item.Text , Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                        </ig:ScatterLineSeries.ToolTip>
+                                    </ig:ScatterLineSeries>
+                                </ig:XamDataChart.Series>
+                            </ig:XamDataChart>
+                        </Grid>
+                    </GroupBox>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Main" Background="#FF909090">
+                <Grid Background="#FF252525">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="40*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="2*" />
+                        <RowDefinition Height="60*"/>
+                        <RowDefinition Height="2*" />
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="2*" />
+                    </Grid.RowDefinitions>
+                    
+                    <GroupBox x:Name="Graphics" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="15" Background="DarkGreen">
+                        <Grid>
+                        </Grid>
+                    </GroupBox>
+
+                    <GroupBox x:Name="DataArea" Grid.Column="17" Grid.Row="1" Grid.RowSpan="3"
+						Background="Red">
+                        <Label Content="{Binding Time, UpdateSourceTrigger=PropertyChanged}"/>
+                    </GroupBox>
+
+
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+
+</Window>
