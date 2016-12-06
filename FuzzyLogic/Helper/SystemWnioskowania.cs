@@ -100,7 +100,7 @@ namespace FuzzyLogic
             }
             srodekCiezkosciKlimatyzacja = Math.Round(gora / dol);
         }
-
+        
         private double Min(params double[] Values)
         {
             return Values.Min();

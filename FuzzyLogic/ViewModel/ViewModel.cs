@@ -32,7 +32,6 @@ namespace FuzzyLogic
             get { return _TempMax; }
             set { SetProperty(ref _TempMax, value); }
         }
-
         //for listbox
         private ObservableCollection<int> _TempList;
         public ObservableCollection<int> TempList
@@ -66,7 +65,6 @@ namespace FuzzyLogic
                 //Line_Heat = new Heat(StartValues.HeatMin, StartValues.HeatMax, 20, StartValues.TempChartPrecision);
             }
         }
-
         //DataCollection
         private Temp _Line_Temp;
         public Temp Line_Temp
@@ -385,6 +383,8 @@ namespace FuzzyLogic
         #endregion
         
         SystemWnioskowania x = new SystemWnioskowania();
+        //(cos(lnx))^4*50 temp przyrost
+        //tempDocelowa+temDocelowa*10*%grzania --temp pieca od wydajnosci %grzania
 
         public ViewModel()
         {

@@ -224,7 +224,7 @@
                                             <TextBlock Text="{Binding Path=Item.Text , Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                                         </ig:ScatterLineSeries.ToolTip>
                                     </ig:ScatterLineSeries>
-                                    
+
                                     <ig:ScatterLineSeries ItemsSource="{Binding Line_Conditioner }" 
                                                           XMemberPath="X"
                                                           YMemberPath="ZbiorWnioskowania"
@@ -323,7 +323,7 @@
                                             <TextBlock Text="{Binding Path=Item.Text , Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                                         </ig:ScatterLineSeries.ToolTip>
                                     </ig:ScatterLineSeries>
-                                    
+
                                     <ig:ScatterLineSeries 
                                                           ItemsSource="{Binding Line_Heat }" 
                                                           XMemberPath="X"
@@ -339,7 +339,7 @@
                                             <TextBlock Text="{Binding Path=Item.Text , Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                                         </ig:ScatterLineSeries.ToolTip>
                                     </ig:ScatterLineSeries>
-                                    
+
                                     <ig:ScatterLineSeries 
                                                           ItemsSource="{Binding Line_Heat}" 
                                                           XMemberPath="X"
@@ -454,7 +454,7 @@
                                             <TextBlock Text="{Binding Path=Item.Text , Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                                         </ig:ScatterLineSeries.ToolTip>
                                     </ig:ScatterLineSeries>
-                                    
+
                                     <ig:ScatterLineSeries 
                                                           ItemsSource="{Binding Line_Temp }" 
                                                           XMemberPath="X"
@@ -470,7 +470,7 @@
                                             <TextBlock Text="{Binding Path=Item.Text , Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                                         </ig:ScatterLineSeries.ToolTip>
                                     </ig:ScatterLineSeries>
-                                    
+
                                     <ig:ScatterLineSeries 
                                                           ItemsSource="{Binding Line_Temp }" 
                                                           XMemberPath="X"
@@ -500,7 +500,7 @@
                                         <ig:ScatterLineSeries.ToolTip>
                                             <TextBlock Text="{Binding Path=Item.Text , Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                                         </ig:ScatterLineSeries.ToolTip>
-                                        
+
                                     </ig:ScatterLineSeries>
                                     <ig:ScatterLineSeries 
                                                           ItemsSource="{Binding Line_Temp}" 
@@ -527,7 +527,7 @@
                                                      Interval="10"
                                                      MinimumValue="{Binding WeatherXmin}"
                                                      MaximumValue="{Binding WeatherXmax}"/>
-                                                     
+
                                     <ig:NumericYAxis x:Name="YAxisWeather" 
                                                      Title="Temp"
                                                      Interval="10"
@@ -586,10 +586,9 @@
                         <RowDefinition Height="20"/>
                         <RowDefinition Height="2*" />
                     </Grid.RowDefinitions>
-                    
+
                     <GroupBox x:Name="Graphics" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="15" Background="DarkGreen">
-                        <Grid>
-                        </Grid>
+                        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="23" Margin="60,96,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
                     </GroupBox>
 
                     <GroupBox x:Name="DataArea" Grid.Column="17" Grid.Row="1" Grid.RowSpan="3"

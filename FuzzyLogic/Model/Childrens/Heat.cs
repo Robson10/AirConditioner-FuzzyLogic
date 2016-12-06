@@ -4,7 +4,6 @@ namespace FuzzyLogic.Model
 {
     class Heat: AbsCollection<ChartItem5Value>
     {
-
         public Heat()
         {
             Prepare();
