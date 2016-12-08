@@ -10,11 +10,6 @@ namespace FuzzyLogic
 {
     class SystemWnioskowania
     {
-        //public Heat heat = new Heat();
-        //public Conditioner conditioner = new Conditioner();
-        //public double srodekCiezkosciHeat;
-        //public double srodekCiezkosciConditioner;
-
         public double srodekCiezkosciOgrzewanie = 0;
         public double srodekCiezkosciKlimatyzacja = 0;
         public int temp = 0;
@@ -23,8 +18,16 @@ namespace FuzzyLogic
             //Rozmywanie();
         }
         
-        public void Rozmywanie( Heat Out1, Conditioner Out2, Temp InChart1, int index1,  WorkHour InChart2,int index2) 
+        public void Rozmywanie( Heat Out1, Conditioner Out2, Temp InChart1, int value1,  WorkHour InChart2,int index2) 
         {
+            int index1=0;
+            for (int i = 0; i < InChart1.Count; i++)
+            {
+                if (InChart1[i].X==value1)
+                {
+                    index1 = i;
+                }
+            }
             temp = InChart1[index1].X;//dla Labela
             BlokWnioskowaniaOgrzewania(ref Out1,InChart1[index1],InChart2[index2]);
             BlokWnioskowaniaKlimatyzacji(ref Out2,InChart1[index1], InChart2[index2]);

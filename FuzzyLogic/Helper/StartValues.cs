@@ -2,30 +2,34 @@
 {
     public static class StartValues
     {
-        public const int TempReached = 0;
+        public static int TempReached = 0;
         public const int ChartPre = 1;
 
         //hours on Chart
         public const int HoursOnChart = 48;
         //Temperatura
+        public const int TempExpectedMin = 10;
+        public const int TempExpectedMax = 40;
         public const int TempMin = 0;
         public const int TempMax = 40;
         public static int TempExpectedDefault = 20;
-        
+
         //ogrzewanie
         public const int HeatMin = 0;//w % 0*np 100^C
         public const int HeatMax = 100;
-        
+        public const int maxTempHeat = 70;
+
         //Klimatyzacja
         public const int ConditionerMin = 0;
         public const int ConditionerMax = 100;
+        public const int minTempConditioner = 10;
 
         //godziny pracy
         public const int WorkHoursMin = 0;
         public const int WorkHoursMax = 23;
         public const int WorkHoursDefaultBegin = 20;
         public const int WorkHoursDefaultEnd = 10;
-       // public const int WorkHoursIncrement = 1;
+        // public const int WorkHoursIncrement = 1;
 
         //Powierzchnia budynku
         public const int RoomAreaMin = 10;
@@ -45,16 +49,16 @@
         public const int WindowAreaIncrement = 2;
 
         //Tytuły
-        public const string ChartHeatTittle  = "Ogrzewanie";
+        public const string ChartHeatTittle = "Ogrzewanie";
         public const string ChartTempTittle = "Temperatura";
-        public const string ChartWorkHoursTittle  = "Godziny Pracy";
+        public const string ChartWorkHoursTittle = "Godziny Pracy";
         public const string ChartConditionerTittle = "Klimatyzacja";
         public const string ChartWeatherTittle = "Pogoda";
         public const string ChartHelperTittle = "Wnioskowanie";
 
         //czas
         public const int TimeSpeed = 3;
-        public const int TimeSpeed1 = 1000;
+        public const int TimeSpeed1 = 5000;
         public const int TimeSpeed2 = 500;
         public const int TimeSpeed3 = 250;
 

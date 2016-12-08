@@ -41,7 +41,7 @@ namespace FuzzyLogic
                 if (_TempList == null)
                 {
                     _TempList = new ObservableCollection<int>();
-                    for (int i = StartValues.TempMin; i <= StartValues.TempMax; i += StartValues.ChartPre)
+                    for (int i = StartValues.TempExpectedMin; i <= StartValues.TempExpectedMax; i += StartValues.ChartPre)
                     {
                         _TempList.Add(i);
                     }
@@ -342,23 +342,23 @@ namespace FuzzyLogic
             set { SetProperty(ref _HelperMax, value); }
         }
 
-        private string _SrodekHeat = "";
-        public string SrodekHeat
+        private int _TempHeat = 0;
+        public int TempHeat
         {
-            get { return _SrodekHeat; }
-            set { SetProperty(ref _SrodekHeat, "CoG.H" + value); }
+            get { return _TempHeat; }
+            set { SetProperty(ref _TempHeat,  value); }
         }
-        private string _SrodekConditioner = "";
-        public string SrodekConditioner
+        private int _TempConditioner = 0;
+        public int TempConditioner
         {
-            get { return _SrodekConditioner; }
-            set { SetProperty(ref _SrodekConditioner, "CoG.C" + value); }
+            get { return _TempConditioner; }
+            set { SetProperty(ref _TempConditioner,  value); }
         }
-        private string _TempNow = "";
-        public string TempNow
+        private int _TempNow = 19;
+        public int TempNow
         {
             get { return _TempNow; }
-            set { SetProperty(ref _TempNow, "T" + value); }
+            set { SetProperty(ref _TempNow, value); }
         }
         #endregion
 
@@ -383,9 +383,8 @@ namespace FuzzyLogic
         #endregion
         
         SystemWnioskowania x = new SystemWnioskowania();
-        //(cos(lnx))^4*50 temp przyrost
-        //tempDocelowa+temDocelowa*10*%grzania --temp pieca od wydajnosci %grzania
 
+        //konstruktor,  dodanie command(cos ala event)
         public ViewModel()
         {
             ClockSpeedCommand = new DelegateCommand<object>(Execute_ClockSpeed);
@@ -393,10 +392,12 @@ namespace FuzzyLogic
             TaskClock.Start();
         }
 
+        //zamiana parametru z kliknietego buttonu na tryb szybkosci
         private void Execute_ClockSpeed(object speed)
         {
             _ClockSpeed = Int32.Parse(speed.ToString());
         }
+        //wywoływanie metod w tasku oraz usypianie taska wg zadanego trybu
         private void Clock_Increment_Task()
         {
             while (true)
@@ -418,6 +419,7 @@ namespace FuzzyLogic
                 }
             }
         }
+        //imitacja czasu
         private void TaskMethodHelper(int sleep)
         {
             Time = "1";
@@ -425,14 +427,21 @@ namespace FuzzyLogic
             {
                 Application.Current.Dispatcher.Invoke((Action)(() =>
                 {
+                    //dodanie kolejnej temp na wykresie pogody
                     Line_Weather.AddNext();
-                    //int z = Line_Weather[(Line_Weather.Count - 1)].X % 24;
-                    //x.Rozmywanie(Line_Heat, Line_Conditioner, Line_Temp, temp, Line_WorkHours, z);
-                    int z = Line_Weather[(Line_Weather.Count - 1)].X % 60;
-                    x.Rozmywanie(Line_Heat, Line_Conditioner, Line_Temp, z, Line_WorkHours, 9);
-                    TempNow = x.temp.ToString();
-                    SrodekHeat = x.srodekCiezkosciOgrzewanie.ToString();
-                    SrodekConditioner = x.srodekCiezkosciKlimatyzacja.ToString();
+                    //wyciągniecie godziny na podstawie wykresu pogody;
+                    int z = Line_Weather[(Line_Weather.Count - 1)].X % 24;
+                    //wyliczanie środkow ciezkosci dla klimy i pieca (wyniki dostepne w geterach)
+                    x.Rozmywanie(Line_Heat, Line_Conditioner, Line_Temp, TempNow, Line_WorkHours, 9);
+
+                    //wyliczanie temp pieca i klimatyzacji na podstawie środka ciezkosci
+                    ObliczTempPieca(x.srodekCiezkosciOgrzewanie);
+                    ObliczTempKlimy(x.srodekCiezkosciKlimatyzacja);
+
+                    //wyliczanie zmiany temp w pomieszczeniu
+                    TempUpdate(TempNow, TempHeat,TempConditioner, Line_Weather[(Line_Weather.Count - 1)].Y);
+                    
+                    //przesuwanie wykresu pogody
                     if (_Line_Weather.Count >= StartValues.HoursOnChart)
                     {
                         WeatherXmin ++;
@@ -443,6 +452,36 @@ namespace FuzzyLogic
             catch (System.NullReferenceException)
             { }
             Thread.Sleep(sleep);
+        }
+        private void ObliczTempPieca(double x)
+        {
+            int result = ((int)Math.Round(TempExpected + StartValues.maxTempHeat * x / 100));
+            if (result > StartValues.maxTempHeat) result = StartValues.maxTempHeat;
+            TempHeat = result;
+
+        }
+        private void ObliczTempKlimy(double x)
+        {
+            int result = ((int)Math.Round(TempExpected - StartValues.minTempConditioner * x / 100));
+            if (result < StartValues.minTempConditioner) result = StartValues.minTempConditioner;
+            TempConditioner = result;
+        }
+        public void TempUpdate(int TNow,int THeat,int TConditioner,int TWeather)
+        {
+            tutajwzorydziergaj
+            //(cos(lnx))^4*50 temp  
+            //  10          20          -   10                   
+            int diff = THeat - TNow;
+            if (diff > 0)
+            {
+                TempNow += TempHeat;
+            }
+            diff = TNow - TConditioner;
+            if (diff > 0)
+            {
+                TempNow -= TempConditioner;
+
+            }
         }
 
     }
