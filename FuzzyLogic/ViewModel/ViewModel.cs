@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Prism.Mvvm;
 using Prism.Commands;
@@ -354,8 +351,8 @@ namespace FuzzyLogic
             get { return _TempConditioner; }
             set { SetProperty(ref _TempConditioner,  value); }
         }
-        private int _TempNow = 0;
-        public int TempNow
+        private double _TempNow = 0;
+        public double TempNow
         {
             get { return _TempNow; }
             set { SetProperty(ref _TempNow, value); }
@@ -421,6 +418,12 @@ namespace FuzzyLogic
         }
         //imitacja czasu
         int hour = 0;
+        //metoda wywoływana na okrągło(przerwy jako task.sleep) ma za zadanie 
+        //dodanie temp pogody (co godzine)
+        //obliczenie środkow ciezkosci
+        //wyliczanie zmiany temp w pomieszczeniu
+        //przesuwanie wykresu pogody
+
         private void TaskMethodHelper(int sleep)
         {
             Time = "1";
@@ -429,22 +432,18 @@ namespace FuzzyLogic
                 Application.Current.Dispatcher.Invoke((Action)(() =>
                 {
                     //dodanie kolejnej temp na wykresie pogody
-                    //Line_Weather.AddNext();
                     int nextWeatherTemp = Line_Weather.NextTemp();
-
-                    //wyciągniecie godziny na podstawie wykresu pogody;
-                    //int z = Line_Weather[(Line_Weather.Count - 1)].X % 24;
-                    
+                                        
                     for (int i = 0; i < StartValues.UpdateTime; i++)
                     {
                         //wyliczanie środkow ciezkosci dla klimy i pieca (wyniki dostepne w geterach)
-                        x.Rozmywanie(Line_Heat, Line_Conditioner, Line_Temp, TempNow, Line_WorkHours, hour);
+                        x.Rozmywanie(Line_Heat, Line_Conditioner, Line_Temp, (int)Math.Round(TempNow), Line_WorkHours, hour);
 
                         //wyliczanie temp pieca i klimatyzacji na podstawie środka ciezkosci
-                        ObliczTempPieca(x.srodekCiezkosciOgrzewanie);
-                        ObliczTempKlimy(x.srodekCiezkosciKlimatyzacja);
+                        CalculateTempOfHeater(x.CenterOfGravityHeater);
+                        CalculateTempOfConditioner(x.CenterOfGravityConditioner);
                         //wyliczanie zmiany temp w pomieszczeniu
-                        TempUpdate(TempExpected, TempNow, TempHeat, TempConditioner, nextWeatherTemp);
+                        TempUpdate(TempExpected, (int)Math.Round(TempNow), TempHeat, TempConditioner, nextWeatherTemp);
                     }
                     Line_Weather.xWeather+=StartValues.UpdateTime;
                     hour = (hour == 23) ? 0 : hour + 1 ;
@@ -457,41 +456,45 @@ namespace FuzzyLogic
                 }));
             }
             catch (System.NullReferenceException)
-            { }
+            { 
+                //nic sie nie stało wanego
+            }
             Thread.Sleep(sleep);
         }
-        private void ObliczTempPieca(double x)
+        //liczymy temp pieca na podstawie maxTempPiecam tempExpected i gravity 
+        private void CalculateTempOfHeater(double centerOfGravity)
         {
-            int result = ((int)Math.Round(TempExpected + StartValues.maxTempHeat * x / 100));
+            int result = ((int)Math.Round(TempExpected + StartValues.maxTempHeat * centerOfGravity / 100));
             if (result > StartValues.maxTempHeat) result = StartValues.maxTempHeat;
             TempHeat = result;
 
         }
-        private void ObliczTempKlimy(double x)
+        //liczymy temp Klimatyzacji na podstawie maxTempPiecam tempExpected i gravity 
+        private void CalculateTempOfConditioner(double centerOfGravity)
         {
-            int result = ((int)Math.Round(TempExpected - StartValues.minTempConditioner * x / 100));
+            int result = ((int)Math.Round(TempExpected - StartValues.minTempConditioner * centerOfGravity / 100));
             if (result < StartValues.minTempConditioner) result = StartValues.minTempConditioner;
             TempConditioner = result;
         }
+        //tu liczymy wpływy na temp w pomieszczeniu - piec klima pogoda rozmiar budynku
         public void TempUpdate(int TExpected, int TNow, int THeat, int TConditioner, int TWeather)
         {
            
-                double klimatyzacja = (TExpected - TNow >= 0) ? 0 : (TConditioner / 5.0);
-                //double piec = (TExpected - TNow) * (THeat / 100.0);
-                double piec = (TExpected - TNow <= 0) ? 0 : (THeat / 5.0);
-            if (Line_WorkHours[hour].Y == 0)
-            {
-                klimatyzacja = 0;
-                piec = 0;
-            }
-            double pogoda = ((TNow + 1.0) - TWeather==0)? 0:Math.Log10(Math.Abs((TNow + 1.0) - TWeather))/10;
-            if (TWeather < TNow) pogoda *= -1;
+            double conditioner = (TExpected - TNow >= 0) ? 0 : (TConditioner / 2.5);
+            double heater = (TExpected - TNow <= 0) ? 0 : (THeat / 5.0);
+                if (Line_WorkHours[hour].Y == 0)
+                {
+                conditioner = 0;
+                heater = 0;
+                }
+            double weather = ((TNow + 1.0) - TWeather==0)? 0:Math.Log10(Math.Abs((TNow + 1.0) - TWeather));
+            if (TWeather < TNow) weather *= -1;
 
-            double objetoscPomieszczenia = (((WallHeightList[SelectedWallHeight] / 100 * Math.Sqrt(RoomAreaList[SelectedRoomArea]) + WindowAreaList[SelectedWindowArea] / 2) * Math.Sqrt(RoomAreaList[SelectedRoomArea]) / 10));
+            double buildingDimension = (((WallHeightList[SelectedWallHeight] / 100 * Math.Sqrt(RoomAreaList[SelectedRoomArea]) + WindowAreaList[SelectedWindowArea] / 2) * Math.Sqrt(RoomAreaList[SelectedRoomArea]) / 10));
 
-            double result = (piec / objetoscPomieszczenia + pogoda - Math.Abs(klimatyzacja));
-            result = (result > 0) ? Math.Ceiling(result/StartValues.UpdateTime) : Math.Floor(result/ StartValues.UpdateTime);
-            TempNow += (int)result;
+            double result = (heater / buildingDimension + weather - Math.Abs(conditioner));
+            result = (result > 0) ? (result/StartValues.UpdateTime) : (result/ StartValues.UpdateTime);
+            TempNow += result;
             Line_Weather.AddNext(TempNow, TWeather);
         }
 

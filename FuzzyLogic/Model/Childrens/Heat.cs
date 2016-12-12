@@ -9,7 +9,7 @@ namespace FuzzyLogic.Model
             Prepare();
             CreateData();
         }
-
+        //opis jak w conditioner
         private void Prepare()
         {
             min = 0;
@@ -22,6 +22,7 @@ namespace FuzzyLogic.Model
             LimitRight = (int)Math.Ceiling(max + range);
         }
 
+        //opis jak w conditioner
         private void CreateData()
         { 
             for (int i = LimitLeft; i <= LimitRight; i += StartValues.ChartPre)

@@ -29,7 +29,6 @@
         public const int WorkHoursMax = 23;
         public const int WorkHoursDefaultBegin = 5;
         public const int WorkHoursDefaultEnd = 10;
-        // public const int WorkHoursIncrement = 1;
 
         //Powierzchnia budynku
         public const int RoomAreaMin = 10;

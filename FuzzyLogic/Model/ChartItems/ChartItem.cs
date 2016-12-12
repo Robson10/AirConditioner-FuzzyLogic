@@ -31,7 +31,7 @@ namespace FuzzyLogic.Model
             }
         }
         public string Text { get; set; }
-
+        //reagowanie na zmiany w istniejącym polu (obie metody ponizej)
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void OnPropertyChanged(string propertyName)
@@ -47,7 +47,7 @@ namespace FuzzyLogic.Model
         public int X { get; set; }
         public int XWeather { get; set; }
         public int Y { get; set; }
-        public int TempNow { get; set; }
+        public double TempNow { get; set; }
 
     }
 }

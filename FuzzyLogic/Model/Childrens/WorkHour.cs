@@ -6,6 +6,8 @@
         {
             CreateData(beginWork, endWork);
         }
+        //generowanie 1 lub 0 dla godzin od do
+        //if na wypadek gdyby było od wieczora do rana
         public void CreateData(int begin, int end)
         {
             if (begin < end)

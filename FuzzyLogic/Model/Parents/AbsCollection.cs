@@ -10,21 +10,22 @@
         public int LimitRight { get; set; }
         public int XAxisMin { get; set; }
         public int XAxisMax { get; set; }
-        
+        //rozmywania
         protected double RozmywaniePoint(double x, double point)
         {
             if (x == point) return 1;
             else return 0;
         }
-        protected double RozmywanieTriangle(double i, double srodek, double range)
+        protected double RozmywanieTriangle(double i, double center, double range)
         {
-            double poczatek = srodek - range;
-            double koniec = srodek + range;
+            double begin = center - range;
+            double end = center + range;
 
-            if ((i >= poczatek) && (i <= srodek))    return (i - poczatek) / (srodek - poczatek);
-            else if ((i >= srodek) && (i <= koniec)) return (koniec - i) / (koniec - srodek);
+            if ((i >= begin) && (i <= center))    return (i - begin) / (center - begin);
+            else if ((i >= center) && (i <= end)) return (end - i) / (end - center);
             else                                    return 0;
         }
+        //metoda wypelniania tekstem ze sprawdzeniem !=0
         public string FillText(int i, double Min, double Low, double Mid, double Mor, double Max)
         {
             return
@@ -35,6 +36,7 @@
                 ((Mor != 0) ? ("Mor=" + Mor + System.Environment.NewLine) : "") +
                 ((Max != 0) ? ("Max=" + Max+ System.Environment.NewLine) : "");
         }
+        //dodaje do textu parametr Join czyli rozmywanie
         public string AddTextJoin(string allText,double join)
         {
             try { allText= allText.Remove(allText.IndexOf(System.Environment.NewLine+"Join")); }

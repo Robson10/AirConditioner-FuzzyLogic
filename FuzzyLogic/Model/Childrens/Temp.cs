@@ -9,6 +9,7 @@ namespace FuzzyLogic.Model
             Prepare();
             CreateData(LimitLeft,LimitRight);
         }
+        //opis jak w conditioner
         public void Prepare()
         {
             min = StartValues.TempExpectedDefault - 20;
@@ -22,6 +23,7 @@ namespace FuzzyLogic.Model
             LimitLeft = (int)Math.Floor(min - range);
             LimitRight = (int)Math.Ceiling(max + range);
         }
+        //opis jak w conditioner
         private void CreateData(int LimitLeft, int LimitRight)
         {
 
