@@ -127,7 +127,7 @@
                         <Grid >
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="2*"/>
-                                <ColumnDefinition Width="115*"/>
+                                <ColumnDefinition Width="200*"/>
                                 <ColumnDefinition Width="58*"/>
                                 <ColumnDefinition Width="40*"/>
                                 <ColumnDefinition Width="17*"/>
@@ -147,7 +147,7 @@
                                 <RowDefinition Height="1000*"/>
                                 <RowDefinition Height="1*" />
                             </Grid.RowDefinitions>
-                            <Label Content="TempExpected [°C]" 
+                            <Label Content="Expected Temperature [°C]" 
                                    Grid.Row="1" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                             <ComboBox Name="TempExpected"  
                                       Grid.Row="1" Grid.Column="2"
@@ -155,7 +155,7 @@
                                       SelectedItem="{Binding TempExpected}"
                                       />
 
-                            <Label Content="RoomArea [m²]" 
+                            <Label Content="Building Dimension  [m²]" 
                                    Grid.Row="2" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                             <ComboBox Name="RoomArea"
                                       Grid.Row="2" Grid.Column="2" 
@@ -168,7 +168,7 @@
                                       ItemsSource="{Binding WindowAreaList,UpdateSourceTrigger=PropertyChanged}" 
                                       SelectedIndex="{Binding SelectedWindowArea}"/>
 
-                            <Label Content="WallHeight [cm]" 
+                            <Label Content="Wall Height [cm]" 
                                    Grid.Row="3" Grid.Column="1"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                             <ComboBox Name="WallHeight"
                                       Grid.Row="3" Grid.Column="2" 
@@ -185,8 +185,8 @@
                                       SelectedItem="{Binding SelectedWorkHourMax}"/>
 
 
-                            <Label Content="{Binding SrodekHeat}" Grid.Row="6" Grid.Column="6"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                            <Label Content="{Binding SrodekConditioner}" Grid.Row="6" Grid.Column="7"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                            <Label Content="{Binding TempHeat}" Grid.Row="6" Grid.Column="6"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                            <Label Content="{Binding TempConditioner}" Grid.Row="6" Grid.Column="7"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                             <Label Content="{Binding TempNow}" Grid.Row="6" Grid.Column="3"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
 
                             <ig:XamDataChart Name="Helper"
@@ -243,8 +243,7 @@
                                 </ig:XamDataChart.Series>
 
                             </ig:XamDataChart>
-                            <Button Grid.Column="6" Command="{Binding HelperCommand}" Content="Button" HorizontalAlignment="Left" Grid.RowSpan="2" VerticalAlignment="Top" Width="75"/>
-
+                            
                         </Grid>
                     </GroupBox>
 
@@ -524,20 +523,20 @@
                                 <ig:XamDataChart.Axes>
                                     <ig:NumericXAxis x:Name="XAxisWeather"
                                                      Title="Time"
-                                                     Interval="10"
+                                                     Interval="4"
                                                      MinimumValue="{Binding WeatherXmin}"
                                                      MaximumValue="{Binding WeatherXmax}"/>
 
                                     <ig:NumericYAxis x:Name="YAxisWeather" 
                                                      Title="Temp"
                                                      Interval="10"
-                                                     MinimumValue="{Binding TempMin}"
-                                                     MaximumValue="{Binding TempMax}"/>
+                                                     MinimumValue="0"
+                                                     MaximumValue="50"/>
                                 </ig:XamDataChart.Axes>
                                 <ig:XamDataChart.Series>
                                     <ig:ScatterLineSeries 
                                                           ItemsSource="{Binding Line_Weather }" 
-                                                          XMemberPath="X"
+                                                          XMemberPath="XWeather"
                                                           YMemberPath="Y"
                                                           XAxis="{Binding ElementName=XAxisWeather}"
                                                           YAxis="{Binding ElementName=YAxisWeather}"
@@ -550,55 +549,28 @@
                                             <TextBlock Text="{Binding Path=Item.Text , Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                                         </ig:ScatterLineSeries.ToolTip>
                                     </ig:ScatterLineSeries>
+                                    <ig:ScatterLineSeries 
+                                                          ItemsSource="{Binding Line_Weather }" 
+                                                          XMemberPath="X"
+                                                          YMemberPath="TempNow"
+                                                          XAxis="{Binding ElementName=XAxisWeather}"
+                                                          YAxis="{Binding ElementName=YAxisWeather}"
+                                                          Thickness="2"
+                                                          Brush="Red"
+                                                          MarkerType="Circle"
+                                                          MarkerBrush="Red"
+                                                          >
+                                        <ig:ScatterLineSeries.ToolTip>
+                                            <TextBlock Text="{Binding Path=Item.Text , Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                        </ig:ScatterLineSeries.ToolTip>
+                                    </ig:ScatterLineSeries>
                                 </ig:XamDataChart.Series>
                             </ig:XamDataChart>
                         </Grid>
                     </GroupBox>
                 </Grid>
             </TabItem>
-            <TabItem Header="Main" Background="#FF909090">
-                <Grid Background="#FF252525">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*"/>
-                        <ColumnDefinition Width="10*"/>
-                        <ColumnDefinition Width="2*"/>
-                        <ColumnDefinition Width="10*"/>
-                        <ColumnDefinition Width="2*"/>
-                        <ColumnDefinition Width="10*"/>
-                        <ColumnDefinition Width="2*"/>
-                        <ColumnDefinition Width="10*"/>
-                        <ColumnDefinition Width="2*"/>
-                        <ColumnDefinition Width="10*"/>
-                        <ColumnDefinition Width="2*"/>
-                        <ColumnDefinition Width="10*"/>
-                        <ColumnDefinition Width="2*"/>
-                        <ColumnDefinition Width="10*"/>
-                        <ColumnDefinition Width="2*"/>
-                        <ColumnDefinition Width="10*"/>
-                        <ColumnDefinition Width="2*"/>
-                        <ColumnDefinition Width="40*"/>
-                        <ColumnDefinition Width="2*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="2*" />
-                        <RowDefinition Height="60*"/>
-                        <RowDefinition Height="2*" />
-                        <RowDefinition Height="20"/>
-                        <RowDefinition Height="2*" />
-                    </Grid.RowDefinitions>
-
-                    <GroupBox x:Name="Graphics" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="15" Background="DarkGreen">
-                        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="23" Margin="60,96,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-                    </GroupBox>
-
-                    <GroupBox x:Name="DataArea" Grid.Column="17" Grid.Row="1" Grid.RowSpan="3"
-						Background="Red">
-                        <Label Content="{Binding Time, UpdateSourceTrigger=PropertyChanged}"/>
-                    </GroupBox>
-
-
-                </Grid>
-            </TabItem>
+            
         </TabControl>
     </Grid>
 

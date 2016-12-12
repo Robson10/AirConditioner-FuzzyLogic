@@ -64,7 +64,7 @@ namespace FuzzyLogic
                 gora += Out[i].X * Out[i].ZbiorWnioskowania;
                 dol += Out[i].ZbiorWnioskowania;
             }
-               srodekCiezkosciOgrzewanie= Math.Round(gora / dol);
+               srodekCiezkosciOgrzewanie=(dol==0)?0: Math.Round(gora / dol);
         }
         private void BlokWnioskowaniaKlimatyzacji(ref Conditioner Out, ChartItem5Value in1, ChartItem1Value in2)
         {
@@ -101,7 +101,7 @@ namespace FuzzyLogic
                 gora += Out[i].X * Out[i].ZbiorWnioskowania;
                 dol += Out[i].ZbiorWnioskowania;
             }
-            srodekCiezkosciKlimatyzacja = Math.Round(gora / dol);
+            srodekCiezkosciKlimatyzacja = (dol == 0) ? 0 : Math.Round(gora / dol);
         }
         
         private double Min(params double[] Values)

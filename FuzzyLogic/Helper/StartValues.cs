@@ -4,7 +4,7 @@
     {
         public static int TempReached = 0;
         public const int ChartPre = 1;
-
+        public static int UpdateTime =4;//1-1h 2-30min 4-15min...
         //hours on Chart
         public const int HoursOnChart = 48;
         //Temperatura
@@ -27,7 +27,7 @@
         //godziny pracy
         public const int WorkHoursMin = 0;
         public const int WorkHoursMax = 23;
-        public const int WorkHoursDefaultBegin = 20;
+        public const int WorkHoursDefaultBegin = 5;
         public const int WorkHoursDefaultEnd = 10;
         // public const int WorkHoursIncrement = 1;
 
@@ -57,10 +57,10 @@
         public const string ChartHelperTittle = "Wnioskowanie";
 
         //czas
-        public const int TimeSpeed = 3;
+        public const int TimeSpeed = 1;
         public const int TimeSpeed1 = 5000;
-        public const int TimeSpeed2 = 500;
-        public const int TimeSpeed3 = 250;
+        public const int TimeSpeed2 = 2000;
+        public const int TimeSpeed3 = 100;
 
     }
 }
