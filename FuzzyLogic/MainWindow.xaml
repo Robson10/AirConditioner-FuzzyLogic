@@ -111,9 +111,9 @@
                 <Grid Background="#FF252525">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2*"/>
-                        <ColumnDefinition Width="100*"/>
+                        <ColumnDefinition Width="80*"/>
                         <ColumnDefinition Width="2*"/>
-                        <ColumnDefinition Width="100*"/>
+                        <ColumnDefinition Width="120*"/>
                         <ColumnDefinition Width="2*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -189,60 +189,56 @@
                             <Label Content="{Binding TempConditioner}" Grid.Row="6" Grid.Column="7"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                             <Label Content="{Binding TempNow}" Grid.Row="6" Grid.Column="3"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
 
-                            <ig:XamDataChart Name="Helper"
-                                             Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="8" HorizontalZoomable="True" VerticalZoomable="True"
-                                             PlotAreaBackground="Wheat" 
-                                             Title="{Binding ChartHelperTittle}"
-                                             TitleHorizontalAlignment="Center">
+                            <ig:XamDataChart Name="Weather"
+                                             Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="8"
+                                             Title="{Binding ChartWeatherTittle}"  HorizontalZoomable="True" VerticalZoomable="True" PlotAreaBackground="Wheat" TitleHorizontalAlignment="Center">
                                 <ig:XamDataChart.Axes>
-                                    <ig:NumericXAxis x:Name="XAxisHelper"
-                                                     Title="Temperatura"
+                                    <ig:NumericXAxis x:Name="XAxisWeather"
+                                                     Title="Time"
+                                                     Interval="4"
+                                                     MinimumValue="{Binding WeatherXmin}"
+                                                     MaximumValue="{Binding WeatherXmax}"/>
+
+                                    <ig:NumericYAxis x:Name="YAxisWeather" 
+                                                     Title="Temp"
                                                      Interval="10"
-                                                     MinimumValue="{Binding HelperMin}"
-                                                     MaximumValue="{Binding HelperMax}"/>
-
-                                    <ig:NumericYAxis x:Name="YAxisHelper" 
-                                                     Title="Y"
-                                                     Interval="0.5"
-                                                     MinimumValue="-0.5"
-                                                     MaximumValue="1.5"/>
+                                                     MinimumValue="0"
+                                                     MaximumValue="50"/>
                                 </ig:XamDataChart.Axes>
-
                                 <ig:XamDataChart.Series>
-                                    <ig:ScatterLineSeries ItemsSource="{Binding Line_Heat }" 
-                                                          XMemberPath="X"
-                                                          YMemberPath="ZbiorWnioskowania"
-                                                          XAxis="{Binding ElementName=XAxisHelper}"
-                                                          YAxis="{Binding ElementName=YAxisHelper}"
+                                    <ig:ScatterLineSeries 
+                                                          ItemsSource="{Binding Line_Weather }" 
+                                                          XMemberPath="XWeather"
+                                                          YMemberPath="Y"
+                                                          XAxis="{Binding ElementName=XAxisWeather}"
+                                                          YAxis="{Binding ElementName=YAxisWeather}"
                                                           Thickness="2"
-                                                          Brush="Red"
-                                                          MarkerType="None"
-                                                        MarkerBrush="Transparent"
+                                                          Brush="Blue"
+                                                          MarkerType="Circle"
+                                                          MarkerBrush="Blue"
                                                           >
-
                                         <ig:ScatterLineSeries.ToolTip>
                                             <TextBlock Text="{Binding Path=Item.Text , Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                                         </ig:ScatterLineSeries.ToolTip>
                                     </ig:ScatterLineSeries>
-
-                                    <ig:ScatterLineSeries ItemsSource="{Binding Line_Conditioner }" 
+                                    <ig:ScatterLineSeries 
+                                                          ItemsSource="{Binding Line_Weather }" 
                                                           XMemberPath="X"
-                                                          YMemberPath="ZbiorWnioskowania"
-                                                          XAxis="{Binding ElementName=XAxisHelper}"
-                                                          YAxis="{Binding ElementName=YAxisHelper}"
+                                                          YMemberPath="TempNow"
+                                                          XAxis="{Binding ElementName=XAxisWeather}"
+                                                          YAxis="{Binding ElementName=YAxisWeather}"
                                                           Thickness="2"
-                                                          Brush="Blue"
-                                                          MarkerType="None"
-                                                        MarkerBrush="Transparent"
+                                                          Brush="Red"
+                                                          MarkerType="Circle"
+                                                          MarkerBrush="Red"
                                                           >
-
                                         <ig:ScatterLineSeries.ToolTip>
                                             <TextBlock Text="{Binding Path=Item.Text , Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                                         </ig:ScatterLineSeries.ToolTip>
                                     </ig:ScatterLineSeries>
                                 </ig:XamDataChart.Series>
-
                             </ig:XamDataChart>
+                            
                             
                         </Grid>
                     </GroupBox>
@@ -256,8 +252,9 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="100*" />
                                 <RowDefinition Height="100*"/>
-                                <RowDefinition Height="100*" />
+                               <!--WorkHour <RowDefinition Height="100*" /> -->
                             </Grid.RowDefinitions>
+                            <!--WorkHours
                             <ig:XamDataChart Name="WorkHours"   
                                              Title="{Binding ChartWorkHoursTittle}" Grid.Row="3" Grid.Column="1" HorizontalZoomable="True" VerticalZoomable="True" PlotAreaBackground="Wheat" TitleHorizontalAlignment="Center" >
                                 <ig:XamDataChart.Axes>
@@ -291,6 +288,7 @@
                                 </ig:XamDataChart.Series>
 
                             </ig:XamDataChart>
+                            -->
                             <ig:XamDataChart Name="Heat"
                                              Title="{Binding ChartHeatTittle}" Grid.Row="1" Grid.Column="0" HorizontalZoomable="True" VerticalZoomable="True" PlotAreaBackground="Wheat" TitleHorizontalAlignment="Center">
                                 <ig:XamDataChart.Axes>
@@ -422,7 +420,8 @@
                                 </ig:XamDataChart.Series>
                             </ig:XamDataChart>
                             <ig:XamDataChart Name="Temp"
-                                             Title="{Binding ChartTempTittle}" Grid.Row="2" Grid.Column="0" HorizontalZoomable="True" VerticalZoomable="True" PlotAreaBackground="Wheat" TitleHorizontalAlignment="Center">
+                                             Title="{Binding ChartTempTittle}" 
+                                             Grid.Row="0" Grid.Column="1" HorizontalZoomable="True" VerticalZoomable="True" PlotAreaBackground="Wheat" TitleHorizontalAlignment="Center">
                                 <ig:XamDataChart.Axes>
                                     <ig:NumericXAxis x:Name="XAxisTemp"
                                                      Title="Temperatura"
@@ -518,53 +517,59 @@
                                     </ig:ScatterLineSeries>
                                 </ig:XamDataChart.Series>
                             </ig:XamDataChart>
-                            <ig:XamDataChart Name="Weather"
-                                             Title="{Binding ChartWeatherTittle}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" HorizontalZoomable="True" VerticalZoomable="True" PlotAreaBackground="Wheat" TitleHorizontalAlignment="Center">
+                            <ig:XamDataChart Name="Helper"
+                                            Grid.Row="0" Grid.Column="0" HorizontalZoomable="True" VerticalZoomable="True"
+                                             PlotAreaBackground="Wheat" 
+                                             Title="{Binding ChartHelperTittle}"
+                                             TitleHorizontalAlignment="Center">
                                 <ig:XamDataChart.Axes>
-                                    <ig:NumericXAxis x:Name="XAxisWeather"
-                                                     Title="Time"
-                                                     Interval="4"
-                                                     MinimumValue="{Binding WeatherXmin}"
-                                                     MaximumValue="{Binding WeatherXmax}"/>
-
-                                    <ig:NumericYAxis x:Name="YAxisWeather" 
-                                                     Title="Temp"
+                                    <ig:NumericXAxis x:Name="XAxisHelper"
+                                                     Title="Temperatura"
                                                      Interval="10"
-                                                     MinimumValue="0"
-                                                     MaximumValue="50"/>
+                                                     MinimumValue="{Binding HelperMin}"
+                                                     MaximumValue="{Binding HelperMax}"/>
+
+                                    <ig:NumericYAxis x:Name="YAxisHelper" 
+                                                     Title="Y"
+                                                     Interval="0.5"
+                                                     MinimumValue="-0.5"
+                                                     MaximumValue="1.5"/>
                                 </ig:XamDataChart.Axes>
+
                                 <ig:XamDataChart.Series>
-                                    <ig:ScatterLineSeries 
-                                                          ItemsSource="{Binding Line_Weather }" 
-                                                          XMemberPath="XWeather"
-                                                          YMemberPath="Y"
-                                                          XAxis="{Binding ElementName=XAxisWeather}"
-                                                          YAxis="{Binding ElementName=YAxisWeather}"
+                                    <ig:ScatterLineSeries ItemsSource="{Binding Line_Heat }" 
+                                                          XMemberPath="X"
+                                                          YMemberPath="ZbiorWnioskowania"
+                                                          XAxis="{Binding ElementName=XAxisHelper}"
+                                                          YAxis="{Binding ElementName=YAxisHelper}"
                                                           Thickness="2"
-                                                          Brush="Blue"
-                                                          MarkerType="Circle"
-                                                          MarkerBrush="Blue"
+                                                          Brush="Red"
+                                                          MarkerType="None"
+                                                        MarkerBrush="Transparent"
                                                           >
+
                                         <ig:ScatterLineSeries.ToolTip>
                                             <TextBlock Text="{Binding Path=Item.Text , Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                                         </ig:ScatterLineSeries.ToolTip>
                                     </ig:ScatterLineSeries>
-                                    <ig:ScatterLineSeries 
-                                                          ItemsSource="{Binding Line_Weather }" 
+
+                                    <ig:ScatterLineSeries ItemsSource="{Binding Line_Conditioner }" 
                                                           XMemberPath="X"
-                                                          YMemberPath="TempNow"
-                                                          XAxis="{Binding ElementName=XAxisWeather}"
-                                                          YAxis="{Binding ElementName=YAxisWeather}"
+                                                          YMemberPath="ZbiorWnioskowania"
+                                                          XAxis="{Binding ElementName=XAxisHelper}"
+                                                          YAxis="{Binding ElementName=YAxisHelper}"
                                                           Thickness="2"
-                                                          Brush="Red"
-                                                          MarkerType="Circle"
-                                                          MarkerBrush="Red"
+                                                          Brush="Blue"
+                                                          MarkerType="None"
+                                                        MarkerBrush="Transparent"
                                                           >
+
                                         <ig:ScatterLineSeries.ToolTip>
                                             <TextBlock Text="{Binding Path=Item.Text , Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                                         </ig:ScatterLineSeries.ToolTip>
                                     </ig:ScatterLineSeries>
                                 </ig:XamDataChart.Series>
+
                             </ig:XamDataChart>
                         </Grid>
                     </GroupBox>
